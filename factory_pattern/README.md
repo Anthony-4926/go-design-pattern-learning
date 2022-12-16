@@ -16,7 +16,7 @@
 
 ## 类图
 
-<img src="http://imgbed4926.oss-cn-hangzhou.aliyuncs.com/img/UML 图 (1).jpg" alt="UML 图 (1)" style="zoom:50%;" />
+<img src="http://imgbed4926.oss-cn-hangzhou.aliyuncs.com/img/UML 图 (1).jpg" alt="UML 图 (1)" height="350dp" />
 
 ## 代码实现
 

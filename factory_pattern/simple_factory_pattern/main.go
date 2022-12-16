@@ -8,16 +8,16 @@ type Phone interface {
 	Call()
 }
 
-type XiaoMi6 struct{}
+type XiaoMi struct{}
 
-func (phone *XiaoMi6) Call() {
-	fmt.Println("小米6打电话")
+func (phone *XiaoMi) Call() {
+	fmt.Println("小米打电话")
 }
 
-type XiaoMi13 struct{}
+type HuaWei struct{}
 
-func (phone *XiaoMi13) Call() {
-	fmt.Println("小米13打电话")
+func (phone *HuaWei) Call() {
+	fmt.Println("华为打电话")
 }
 
 // ----------------------PhoneFactory-------------------------
@@ -25,10 +25,10 @@ type PhoneFactory struct{}
 
 func (*PhoneFactory) ProductPhone(model string) Phone {
 	var phone Phone
-	if model == "XiaoMi13" {
-		phone = new(XiaoMi13)
-	} else if model == "XiaoMi6" {
-		phone = new(XiaoMi6)
+	if model == "HuaWei" {
+		phone = new(HuaWei)
+	} else if model == "XiaoMi" {
+		phone = new(XiaoMi)
 	}
 	return phone
 }
@@ -41,10 +41,10 @@ func NewPhoneFactory() *PhoneFactory {
 func main() {
 	phoneFactory := NewPhoneFactory()
 
-	phone6 := phoneFactory.ProductPhone("XiaoMi6")
+	phone6 := phoneFactory.ProductPhone("XiaoMi")
 	phone6.Call()
 
-	phone13 := phoneFactory.ProductPhone("XiaoMi13")
+	phone13 := phoneFactory.ProductPhone("HuaWei")
 	phone13.Call()
 
 }
