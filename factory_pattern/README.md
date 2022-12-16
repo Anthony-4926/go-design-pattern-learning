@@ -10,7 +10,7 @@
 | 抽象产品 | 简单工厂模式所创建的所有对象的父类，它负责描述所有实例所共有的公共接口。 |
 | 具体产品 | 简单工厂模式所创建的具体实例对象。                           |
 
-## 适用范围
+## 适用场景
 
 工厂类负责创建的对象比较少，客户只知道传入了工厂类的参数，对于始何创建对象（逻辑）不关心。
 
@@ -26,28 +26,32 @@ package main
 import "fmt"
 
 // ---------------------phone--------------------------------
+// 抽象的产品
 type Phone interface {
 	Call()
 }
 
-type XiaoMi6 struct{}
-func (phone *XiaoMi6) Call() {
-	fmt.Println("小米6打电话")
+type XiaoMi struct{}
+
+func (phone *XiaoMi) Call() {
+	fmt.Println("小米打电话")
 }
 
-type XiaoMi13 struct{}
-func (phone *XiaoMi13) Call() {
-	fmt.Println("小米13打电话")
+type HuaWei struct{}
+
+func (phone *HuaWei) Call() {
+	fmt.Println("华为打电话")
 }
 
 // ----------------------PhoneFactory-------------------------
 type PhoneFactory struct{}
+
 func (*PhoneFactory) ProductPhone(model string) Phone {
 	var phone Phone
-	if model == "XiaoMi13" {
-		phone = new(XiaoMi13)
-	} else if model == "XiaoMi6" {
-		phone = new(XiaoMi6)
+	if model == "HuaWei" {
+		phone = new(HuaWei)
+	} else if model == "XiaoMi" {
+		phone = new(XiaoMi)
 	}
 	return phone
 }
@@ -60,10 +64,10 @@ func NewPhoneFactory() *PhoneFactory {
 func main() {
 	phoneFactory := NewPhoneFactory()
 
-	phone6 := phoneFactory.ProductPhone("XiaoMi6")
+	phone6 := phoneFactory.ProductPhone("XiaoMi")
 	phone6.Call()
 
-	phone13 := phoneFactory.ProductPhone("XiaoMi13")
+	phone13 := phoneFactory.ProductPhone("HuaWei")
 	phone13.Call()
 
 }
@@ -71,8 +75,8 @@ func main() {
 ```
 
 ```
-小米6打电话
-小米13打电话
+小米打电话
+华为打电话
 ```
 
 ## 优点
@@ -87,3 +91,99 @@ func main() {
 - 使用简单工厂模式将会增加系统中类的个数，在一定程序上增加了系统的复杂度和理解难度。
 - 系统扩展困难，一旦添加新产品就不得不修改工厂逻辑，在产品类型较多时，有可能造成工厂逻辑过于复杂，不利于系统的扩展和维护。
 - 简单工厂模式由于使用了静态工厂方法，造成工厂角色无法形成基于继承的等级结构。
+
+---
+
+# 工厂方法模式
+
+## 角色和职责
+
+| 角色     | 职责                                                 |
+| :------- | ---------------------------------------------------- |
+| 抽象工厂 | 工厂方法模式的核心，任何工厂类都必须实现这个接口。   |
+| 具体工厂 | 具体工厂类是抽象工厂的一个实现，负责实例化产品对象。 |
+| 抽象产品 | 工厂方法模式所创建的所有对象的父类。                 |
+| 具体产品 | 具体工厂所创建的具体实例对象。                       |
+
+## 适用场景
+
+当对象的创建逻辑比较复杂，不只是简单的 new 一下就可以，而是要组合其他类对象，做各种初始化操作的时候，推荐使用工厂方法模式，将复杂的创建逻辑拆分到多个工厂类中，让每个工厂类都不至于过于复杂。
+
+## 类图
+
+<img src="http://imgbed4926.oss-cn-hangzhou.aliyuncs.com/img/image-20221216202913130.png" alt="image-20221216202913130" height="400dp" />
+
+## 代码实现
+
+```go
+package main
+
+import "fmt"
+
+// ---------------------phone--------------------------------
+// 抽象的产品
+type Phone interface {
+	Call()
+}
+
+type XiaoMi struct{}
+
+func (phone *XiaoMi) Call() {
+	fmt.Println("小米打电话")
+}
+
+type HuaWei struct{}
+
+func (phone *HuaWei) Call() {
+	fmt.Println("华为打电话")
+}
+
+// ----------------------PhoneFactory-------------------------
+// 抽象的工厂
+type PhoneFactory interface {
+	ProductPhone() Phone
+}
+
+type XiaoMiFactory struct{}
+
+func (f XiaoMiFactory) ProductPhone() Phone {
+	return new(XiaoMi)
+}
+
+type HuaWeiFactory struct{}
+
+func (f HuaWeiFactory) ProductPhone() Phone {
+	return new(HuaWei)
+}
+
+// ------------------------main-------------------------------
+func main() {
+	// 生产小米手机
+	var xiaoMiFactory PhoneFactory
+	xiaoMiFactory = new(XiaoMiFactory)
+	xiaoMi := xiaoMiFactory.ProductPhone()
+	xiaoMi.Call()
+
+	//	生产华为手机
+	var huaWeiFactory PhoneFactory
+	huaWeiFactory = new(HuaWeiFactory)
+	huaWei := huaWeiFactory.ProductPhone()
+	huaWei.Call()
+}
+
+```
+
+```
+小米打电话
+华为打电话
+```
+
+## 优点
+
+- 一个调用者想创建一个对象，只要知道其名称就可以了。
+- 扩展性高，如果想增加一个产品，只要扩展一个工厂类就可以。
+- 屏蔽产品的具体实现，调用者只关心产品的接口。
+
+## 缺点
+
+每次增加一个产品时，都需要增加一个具体类和对象实现工厂，使得系统中类的个数成倍增加，在一定程度上增加了系统的复杂度，同时也增加了系统具体类的依赖。这并不是什么好事。
